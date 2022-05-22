@@ -1,0 +1,152 @@
+openapi: 3.0.3
+info:
+  title: Payment system
+  description: Set up a system for receiving a payment request transaction
+  version: 1.0.0
+servers:
+  - url: "http://localhost:8080"
+
+tags:
+  - name: "PaymentController"
+paths:
+  /api/v1/payments:
+    post:
+      tags:
+        - "PaymentController"
+      summary: "Payment"
+      operationId: "payment"
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              $ref: "#/components/schemas/PaymentRequest"
+      responses:
+        "201":
+          description: "OK"
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: "string"
+                    example: "Payment succeeded."
+        "400":
+          description: "Bad Request"
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  paymentError:
+                    type: "string"
+              examples:
+                paymentMatchError:
+                  summary: "payment Match Error"
+                  value:
+                    paymentError: "paymentError failed."
+      security:
+        - token: [ ]
+components:
+  securitySchemes:
+    token:
+      type: apiKey
+      name: Authorization
+      in: header
+  schemas:
+    Buyer:
+      type: "object"
+      properties:
+        buyerId:
+          type: "integer"
+          format: "int64"
+          example: 2
+        email:
+          type: "string"
+          example: "test123@test.com"
+        firstName:
+          type: "string"
+          example: "John"
+        lastName:
+          type: "string"
+          example: "Doe"
+        city:
+          type: "string"
+          example: "New York"
+        address:
+          type: "string"
+          example: "Wall Street 1"
+        phoneNumber:
+          type: "string"
+          example: "123456"
+        postIndex:
+          type: "string"
+          example: "123456"
+    CreditCard:
+      type: "object"
+      properties:
+        creditCardid:
+          type: "string"
+          example: "187493"
+        email:
+          type: "string"
+          example: "test@example.com"
+        user_name:
+            type: "string"
+            example: "Bob Smith"
+        cc_number:
+            type: "string"
+            minLength: 16
+            maxLength: 16
+            example: "5496198584584769"
+        cvv:
+          type: "string"
+          minLength: 3
+          maxLength: 3
+          example: "123"
+        expiration_month:
+          type: "integer"
+          format: "int32"
+          minimum: 1
+          maximum: 12
+          example: "4"
+        expiration_year:
+          type: "integer"
+          format: "int32"
+          minimum: 1900
+          maximum: 2100
+          example: "2024"
+    PaymentOrder:
+      type: "object"
+      properties:
+        paymentOrderId:
+          type: "string"
+          example: "5896"
+        sellerAccount:
+          type: "string"
+          example: "5694"
+        amount:
+          type: "number"
+          format: "double"
+          minimum: 0
+          example: 200.5
+        currency:
+          type: "string"
+          minLength: 2
+          maxLength: 4
+          example: "EURO"
+    PaymentRequest:
+      type: "object"
+      properties:
+        chackoutId:
+          type: "string"
+          example: "6547"
+        buyerInfo:
+          $ref: "#/components/schemas/Buyer"
+        creditCardInfo:
+          $ref: "#/components/schemas/CreditCard"
+        paymentOrders:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/PaymentOrder"
