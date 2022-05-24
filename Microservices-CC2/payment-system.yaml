@@ -59,9 +59,8 @@ components:
       type: "object"
       properties:
         buyerId:
-          type: "integer"
-          format: "int64"
-          example: 2
+          type: "string"
+          example: "2"
         email:
           type: "string"
           example: "test123@test.com"
